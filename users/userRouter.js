@@ -107,21 +107,24 @@ function validateUserId(req, res, next) {
   Users.getById(req.params.id)
     .then(user => {
       //console.log(user.id)
-      if (user.id) {
+      if (user) {
         req.user = user;
+        next();
       }
-      next();
+      else {
+        res.status(400).json({ message: "invalid user id" })
+      }
     })
     .catch(error => {
       console.log(error)
-      res.status(400).json({ message: "invalid user id" })
+      res.status(500).json({ message: "unable to validate user" })
     })
 }
 
 function validateUser(req, res, next) {
   // do your magic!
    console.log("user body", req.body)
-  if (!req.body) {
+  if (!Object.values(req.body)) {
     res.status(400).json({message: "missing user data"})
   }
   else if (!req.body.name) {
